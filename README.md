@@ -1,7 +1,7 @@
 # HP3457-OLED-display
 A modern replacement for the low contrast HP3457 Multimeter LCD
 
-HP3547 is a great multimeter of the pre Keysight and pre Agilent era from HP.
+HP3457 is a great multimeter of the pre Keysight and pre Agilent era from HP.
 If you do some research on it, you get to learn a lot of details of how much nice engineering work has been put into the development of this multimeter. It is certainly one of the things, that was developed by great experienced engineers and is a masterpiece in finding proper solutions for technical challenges to push accuracy but also measurement speed on the right level.
 
 HOWEVER: The display is crap. It is a low contrast display with small characters and extremly hard to read under most conditions. When I got mine, I rarely used it just for that reason.
@@ -62,7 +62,7 @@ The software/hex folder also contains precompiled .hex images for those 3 differ
 
 # Putting it together
 
-After soldering the PCBs and flashing the MCU, you can mount the PCB to your lovely HP3547 multimeter. The original press fit DIP socket can be directly plugged into the PCB.
+After soldering the PCBs and flashing the MCU, you can mount the PCB to your lovely HP3457 multimeter. The original press fit DIP socket can be directly plugged into the PCB.
 The OLED display requires a second voltage source to power the OLEDs themselfes. This can be an AC supply, but I recommend for the HP3457 to use the 5V voltage regulator in TO220 housing and connect the AC lines to pin 1 and 2, which is 12 V.
 
 The overall current consumption @12V supply is low and only about 30mA.
