@@ -67,6 +67,8 @@ The software/hex folder also contains precompiled .hex images for those 3 differ
 After soldering the PCBs and flashing the MCU, you can mount the PCB to your lovely HP3457 multimeter. The original press fit DIP socket can be directly plugged into the PCB.
 The OLED display requires a second voltage source to power the OLEDs themselfes. This can be an AC supply, but I recommend for the HP3457 to use the 5V voltage regulator in TO220 housing and connect the AC lines to pin 1 and 2, which is 12 V.
 
+<img src="https://github.com/xyphro/HP3457-OLED-display/blob/main/photos/PowerConnection.jpg?raw=true" width="40%"/>
+
 The overall current consumption @12V supply is low and only about 30mA.
 
 After mounting it looks like this from the internal side (the red supply header is unconnected here):
