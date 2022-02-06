@@ -39,6 +39,9 @@ The software was created using Atmel Studio 7.0 and the project can be directly 
 Don't forget to program the fuses of the ATMega8 MCU and select 8 MHz internal RC oscillator as clock source (otherwise it runs too slow with its default 1 MHz clock only).
 
 NOTE: Ensure to buy the 0.87" variant of the OLEDS. There are also popular 0.91" variants available, but they are to wide!
+I bought my displays directly on Aliexpress: https://de.aliexpress.com/item/1005001856921229.html
+In case the above link stops working, search for items like "XABL 0.87 Inch OLED"
+
 
 # Annuciators:
 
