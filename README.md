@@ -82,5 +82,5 @@ Enjoy your shiny new Display :-)
 
 # Compatibility with other HP devices
 
-The design might be compatible with other HP devices, but I only tested it with HP3547. I see chances for HP3478, HP3468, but also the HP66xx "tank" power supplies. This is not tested by me (yet). If anybody is looking for adventures and tries this out, please feedback information to me, so that I can mark it is compatible here or share the required SW updates with a wider audience.
+The design might be compatible with other HP devices, but I only tested it with HP3457. I see chances for HP3478, HP3468, but also the HP66xx "tank" power supplies. This is not tested by me (yet). If anybody is looking for adventures and tries this out, please feedback information to me, so that I can mark it is compatible here or share the required SW updates with a wider audience.
 
