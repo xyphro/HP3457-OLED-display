@@ -80,7 +80,56 @@ After mounting it looks like this from the internal side (the red supply header 
 
 Enjoy your shiny new Display :-)
 
+# Update 14th February 2025
+
+## Experience after 3+ years
+
+After 3 years of continuous use the Display still works very well. I have the feeling that the OLEDs got a tiny bit dimmer, but it is still tremendously better as the original LC-Display.
+
+## Command coverage
+
+Before this update (14th February 2025) only commands sent by HP3457a were supported. Though new commands were discovered, which triggered more searching for commands. 
+I could find a few more and implemented it. See below table for an overview.
+
+| Command code (12 bit HEX) | Command mnemonic | Implementation status / comment|
+|--------------------|----------------------|----------------------|
+|028 |	WRA12L   | Tested myself on HP3457a. |
+|068 |	WRB12L   | Tested myself on HP3457a. |
+|0a8 |	WRC12L   | Tested myself on HP3457a. |
+|0e8 |	WRAB6L   | Tested with playback of eevblog user Kawal's logic analyzer recording.|
+|128 |	WRABC4L  | Not tested with HP instrument, have sent the command manually.|
+|168 |	WRAB6R   | Not tested with HP instrument, have sent the command manually.|
+|1a8 |	WRABC4R  | Not tested with HP instrument, have sent the command manually.|
+|1e8 |	WRA1L    | Not tested with HP instrument, have sent the command manually.|
+|228 |	WRB1L    | Not tested with HP instrument, have sent the command manually.|
+|268 |	WRC1L    | Not tested with HP instrument, have sent the command manually.|
+|2a8 |	WRA1R    | Not tested with HP instrument, have sent the command manually.|
+|2e8 |	WRB1R    | Not tested with HP instrument, have sent the command manually.|
+|328 |	WRC1R    | Not tested with HP instrument, have sent the command manually.|
+|368 |	WRAB1R   | Not tested with HP instrument, have sent the command manually.|
+|3a8 |	WRABC1L  | Not tested with HP instrument, have sent the command manually.|
+|3e8 |	WRABC1R  | Not tested with HP instrument, have sent the command manually.|
+|230 |  DISOFF   | Implemented, but disabled. It results in wrong behavior on HP3457a. This command is supposed to turn the display OFF. It never gets sent on HP3457A.|
+|320 |  DISTOG   | Implemented, but disabled. It results in wrong behavior on HP3457a. This command is supposed to turn the display OFF. It gets sent on HP3457A, BUT turns the display continously on and off. Before this command always command code 0x2E0 is sent and it is unknown what this command does.|
+|3FC |  DISCMP   | Not implemented, because it is unknown what this command is supposed to do. It does not get sent by HP3457a.|
+|3F0 | PERSCLT | Tested myself on HP3457a. Note that in previous FW versions it was not enabled.|
+|2F0 | WRITAN  | Tested myself on HP3457a. Updates the annuciators.|
+|2E0 | ??????  | Unknown command. It gets sent by HP3457a every time before the DISTOG command is sent.|
+
+
+In case you have ANY information about the unknown HP LCD display commands let me know please. Or if you have a FW image of an original LCD display for analysis :-)
+
+# Further links / Information
+
+An eevblog thread on this project exists with lots of other users HW variant, experience and updates. E.g. HW variants can be found without isolator IC and using LDOs.
+
+Have a look here: <a href="https://www.eevblog.com/forum/testgear/hp3548-hp3457-oled-display/" target="_blank">https://www.eevblog.com/forum/testgear/hp3548-hp3457-oled-display/</a>
+
+In case you build the HW in this project note that it makes use of the 5V supply on the Display connector to supply the isolator IC. HP seems to put series resistors on the main PCB to limit the display IC current. You will very likely need to bridge these resistors - or build one of the eevblog variants with Isolator IC.
+
 # Compatibility with other HP devices
 
-The design might be compatible with other HP devices, but I only tested it with HP3547. I see chances for HP3478, HP3468, but also the HP66xx "tank" power supplies. This is not tested by me (yet). If anybody is looking for adventures and tries this out, please feedback information to me, so that I can mark it is compatible here or share the required SW updates with a wider audience.
+The design might be compatible with other HP devices, but I personally only tested it with HP3547a. 
+It is in the meantime confirmed, that the display works on HP3548 HP3478a and HP3852A too.
 
+Chances are there that it might work for HP3468 and the HP66xx "tank" power supplies too. This is not tested by me (yet). If anybody is looking for adventures and tries this out, please feedback information to me, so that I can mark it is compatible here or share the required SW updates with a wider audience.
