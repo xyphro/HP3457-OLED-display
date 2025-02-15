@@ -30,9 +30,9 @@ static void ssd1306_init(void)
 {
 	
 	PORTD &= ~(1<<7);
-	_delay_ms(100);
+	_delay_ms(50);
 	PORTD |= (1<<7);
-	_delay_ms(100);
+	_delay_ms(50);
 
 	pari2c_start();
 	pari2c_writebyte_bc(OLED_SLADDR);

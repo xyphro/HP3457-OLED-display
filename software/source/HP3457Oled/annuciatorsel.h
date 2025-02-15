@@ -11,7 +11,7 @@
 #define HP3478_ICONS 2
 
 
-#define ANNUCIATORS_PERSONALITY HP3457_ORIGINAL
+#define ANNUCIATORS_PERSONALITY HP3478_ICONS
 
 // This defines for each digit the annuciator icon to be used.
 // HP has different generations of display types. Some display the annuciator as text, some as 
