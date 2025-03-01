@@ -38,9 +38,13 @@ The software was created using Atmel Studio 7.0 and the project can be directly 
 
 Don't forget to program the fuses of the ATMega8 MCU and select 8 MHz internal RC oscillator as clock source (otherwise it runs too slow with its default 1 MHz clock only).
 
-NOTE: Ensure to buy the 0.87" variant of the OLEDS. There are also popular 0.91" variants available, but they are to wide!
+NOTE: Ensure to buy the 0.87" variant of the OLEDS. There are also popular 0.91" variants available, but they are to wide! 
 I bought my displays directly on Aliexpress: https://de.aliexpress.com/item/1005001856921229.html
 In case the above link stops working, search for items like "XABL 0.87 Inch OLED"
+
+I personally tested SSD1336 based display. EEVBlog User Miti bought a display with a CH1115 controller. This controller has a different command set. We jointly have added support for CH1115 displays to the code. In case you have such a SSD1336 you will need to rebuild the software with the `#define DISPLAYTYPE_CH1115` being enabled within oled.c. Otherwise the original SSD1336 based OLED displays will be supported.
+
+The prebuilt binaries provided in this repository are built for SSD1336 based displays.
 
 
 # Annuciators:

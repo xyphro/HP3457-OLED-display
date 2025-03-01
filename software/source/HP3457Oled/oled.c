@@ -25,6 +25,46 @@ uint8_t oled_dots [12]; // dot content of all 12 digits
 
 #define OLED_SLADDR 0x78
 
+// Enable below #define in case your display type is CH1115
+//#define DISPLAYTYPE_CH1115
+
+
+static void CH1115_init(void)
+{
+	PORTD &= ~(1<<7);
+	_delay_ms(50);
+	PORTD |= (1<<7);
+	_delay_ms(50);
+	pari2c_start();
+	pari2c_writebyte_bc(OLED_SLADDR);
+	pari2c_writebyte_bc(0x00);	// control byte
+	pari2c_writebyte_bc(0xae);	// turn off oled panel
+	pari2c_writebyte_bc(0x40);	// set display start line
+	pari2c_writebyte_bc(0xb3);	// set page address
+	pari2c_writebyte_bc(0x81);	// contrast control
+	pari2c_writebyte_bc(0x80);	// 128
+	pari2c_writebyte_bc(0x82);	// IREF
+	pari2c_writebyte_bc(0x00);
+	pari2c_writebyte_bc(0xA0);	// set segment remap
+	pari2c_writebyte_bc(0xA2);
+	pari2c_writebyte_bc(0xA4);
+	pari2c_writebyte_bc(0xA8);	// multiplex ratio
+	pari2c_writebyte_bc(0x2E);	// duty = 1/48
+	pari2c_writebyte_bc(0xC0);	// Com scan direction
+	pari2c_writebyte_bc(0xD3);	// set display offset
+	pari2c_writebyte_bc(0x30);
+	pari2c_writebyte_bc(0xD5);	// set osc division
+	pari2c_writebyte_bc(0x50);
+	pari2c_writebyte_bc(0xD9);	// set pre-charge period
+	pari2c_writebyte_bc(0x22);
+	pari2c_writebyte_bc(0xdb);	// set vcomh
+	pari2c_writebyte_bc(0x35);
+	pari2c_writebyte_bc(0xAd);	// set charge pump enable
+	pari2c_writebyte_bc(0x8A);
+	//pari2c_writebyte_bc(0x33);	// 9v
+	pari2c_writebyte_bc(0xaf);	// turn on oled panel
+	pari2c_stop();
+}
 
 static void ssd1306_init(void)
 {
@@ -81,7 +121,7 @@ static void ssd1306_init(void)
 	pari2c_stop();
 }
 
-void ssd1306_set_region(uint8_t x1, uint8_t x2, uint8_t y1, uint8_t y2)
+static void ssd1306_set_region(uint8_t x1, uint8_t x2, uint8_t y1, uint8_t y2)
 {
 	pari2c_start();
 	pari2c_writebyte_bc(OLED_SLADDR);
@@ -101,8 +141,45 @@ void ssd1306_set_region(uint8_t x1, uint8_t x2, uint8_t y1, uint8_t y2)
 
 }
 
+// x can be any value from 0 to 3
+// y can be 0..127
+static void ch1115_set_location(uint8_t x, uint8_t y)
+{
+	pari2c_start();
+	pari2c_writebyte_bc(OLED_SLADDR);
+	pari2c_writebyte_bc(0x00);
+	pari2c_writebyte_bc(0xB0 | x);
+	pari2c_stop();
+	
+	pari2c_start();
+	pari2c_writebyte_bc(OLED_SLADDR);
+	pari2c_writebyte_bc(0x00);
+	pari2c_writebyte_bc(0x10 | (y >> 4));
+	pari2c_writebyte_bc(y & 0x0f);
+	pari2c_stop();
+}
+
+
 void oled_clear(void)
 {
+#ifdef DISPLAYTYPE_CH1115
+	for (uint8_t x=0; x<4; x++)
+	{
+		ch1115_set_location(x, 0);
+		pari2c_start();
+		pari2c_writebyte_bc(OLED_SLADDR);
+		pari2c_writebyte_bc(0x40);
+		for (uint8_t i=0; i<(128>>2); i++)
+		{
+			
+			pari2c_writebyte_bc(0x00);
+			pari2c_writebyte_bc(0x00);
+			pari2c_writebyte_bc(0x00);
+			pari2c_writebyte_bc(0x00);
+		}
+	}
+	pari2c_stop();
+#else
 	ssd1306_set_region(0, 3, 0, 127);
 	
 	pari2c_start();
@@ -115,9 +192,8 @@ void oled_clear(void)
 		pari2c_writebyte_bc(0x00);
 		pari2c_writebyte_bc(0x00);
 	}
-
 	pari2c_stop();
-	
+#endif	
 }
 
 
@@ -131,11 +207,15 @@ void oled_init(void)
 	
 	pari2c_init();
 	
-	_delay_ms(100);
+	_delay_ms(10);
 	PORTD |=  (1<<6); // power 7.5V on
 	
-	_delay_ms(200);
+	_delay_ms(100);
+#ifdef DISPLAYTYPE_CH1115
+	CH1115_init();
+#else
 	ssd1306_init();
+#endif
 	oled_clear();
 	
 	// fill display memory with empty default values
@@ -165,6 +245,10 @@ void oled_repaint_digits(uint8_t yposSegment)
 	uint16_t segments_all[12];
 	
 	uint8_t i, j;
+#ifdef DISPLAYTYPE_CH1115
+	uint8_t xloc;
+	uint16_t counter;
+#endif
 	
 	j = 11; i = pgm_read_byte( &(oled_reloc[j])); segments_all[i] = pgm_read_word( &(hp_charset[ oled_chars[j] ]) ); dots_all[i]     = oled_dots[j];
 	j = 10; i = pgm_read_byte( &(oled_reloc[j])); segments_all[i] = pgm_read_word( &(hp_charset[ oled_chars[j] ]) ); dots_all[i]     = oled_dots[j];
@@ -179,7 +263,13 @@ void oled_repaint_digits(uint8_t yposSegment)
 	j =  1; i = pgm_read_byte( &(oled_reloc[j])); segments_all[i] = pgm_read_word( &(hp_charset[ oled_chars[j] ]) ); dots_all[i]     = oled_dots[j];
 	j =  0; i = pgm_read_byte( &(oled_reloc[j])); segments_all[i] = pgm_read_word( &(hp_charset[ oled_chars[j] ]) ); dots_all[i]     = oled_dots[j];
 	
+#ifdef DISPLAYTYPE_CH1115
+	xloc = 0;
+	ch1115_set_location(xloc++, yposSegment);
+	counter = 0;
+#else	
 	ssd1306_set_region(0, 3, yposSegment, yposSegment+50-1);
+#endif	
 
 	pari2c_start();
 	pari2c_writebyte_bc(OLED_SLADDR);
@@ -232,6 +322,22 @@ void oled_repaint_digits(uint8_t yposSegment)
 		do
 		{
 			pari2c_writebyte();
+#ifdef DISPLAYTYPE_CH1115
+			counter++;
+			if (counter >= 50)
+			{
+				if (xloc <= 3)
+				{
+					pari2c_stop();
+					ch1115_set_location(xloc++, yposSegment);
+					pari2c_start();
+					pari2c_writebyte_bc(OLED_SLADDR);
+					pari2c_writebyte_bc(0x40);
+				}
+				
+				counter = 0;
+			}
+#endif			
 			val0--;
 		} while ((val0 & 0xf) < 15);
 
@@ -244,7 +350,13 @@ void oled_repaint_digits(uint8_t yposSegment)
 void oled_repaint_annuciators(uint8_t yposAnnuciators)
 {
 	// Draw annuciators
+#ifdef DISPLAYTYPE_CH1115
+	uint8_t xpos = 0;
+	uint8_t bytecounter = 0;
+	ch1115_set_location(xpos, yposAnnuciators);
+#else
 	ssd1306_set_region(0, 3, yposAnnuciators, yposAnnuciators+11-1);
+#endif
 	pari2c_start();
 	pari2c_writebyte_bc(OLED_SLADDR);
 	pari2c_writebyte_bc(0x40);
@@ -266,6 +378,17 @@ void oled_repaint_annuciators(uint8_t yposAnnuciators)
 				pari2c_writebytes[ pgm_read_byte( &(oled_reloc[segmentno])) ] = 0;
 		}
 		pari2c_writebyte();
+#ifdef DISPLAYTYPE_CH1115
+		if ( (++bytecounter >= 11) && (xpos < 3) )
+		{
+			bytecounter = 0;
+			pari2c_stop();
+			ch1115_set_location(++xpos, yposAnnuciators);
+			pari2c_start();
+			pari2c_writebyte_bc(OLED_SLADDR);
+			pari2c_writebyte_bc(0x40);
+		}
+#endif
 	}
 	
 	pari2c_stop();
